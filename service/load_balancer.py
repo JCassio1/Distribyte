@@ -64,7 +64,8 @@ class LoadBalancer:
 
             if not self._agents:
                 print("No agents available. Spawning one.")
-                self.add_agent()
+                new_agent = Agent(f"Agent-{len(self._agents) + 1}", 5)
+                self._agents.append(new_agent)
 
 
 if __name__ == "__main__":
