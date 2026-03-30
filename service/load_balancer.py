@@ -31,6 +31,7 @@ class LoadBalancer:
     def remove_agent(self, agent):
         with self._lock:
             if agent in self._agents:
+                agent.stop(agent.name)
                 self._agents.remove(agent)
                 return True
         return False
@@ -50,6 +51,7 @@ class LoadBalancer:
                     least_loaded_agent = agent
 
         if least_loaded_agent:
+            print(f"Assigning task '{task}' to {least_loaded_agent.name}.")
             return least_loaded_agent.add_task(task)
         return False
     
@@ -66,6 +68,12 @@ class LoadBalancer:
                 print("No agents available. Spawning one.")
                 new_agent = Agent(f"Agent-{len(self._agents) + 1}", 5)
                 self._agents.append(new_agent)
+                new_agent.run()
+                print(f"{new_agent.name} has been added to the load balancer.")
+
+    def agents_status(self):
+        with self._lock:
+            return [(agent.name, agent.current_capacity) for agent in self._agents]
 
 
 if __name__ == "__main__":
